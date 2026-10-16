@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* AI.CO design tokens (from the Figma frames). */
+@theme {
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-surface: #f0f0f0; /* search field, pills, footer */
+  --color-hero: #f2f0f1; /* hero background */
+  --color-card: #f0eeed; /* product image tiles */
+  --color-muted: rgb(0 0 0 / 0.6);
+  --color-subtle: rgb(0 0 0 / 0.4);
+  --color-line: rgb(0 0 0 / 0.1);
+  --color-sale: #ff3333;
+  --color-star: #ffc633;
+  --color-verified: #01ab31;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-display-face), "Arial Black", ui-sans-serif, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --radius-card: 20px;
+  --container-page: 1240px;
+
+  --animate-toast-in: toast-in 200ms ease-out;
+  --animate-sheet-in: sheet-in 220ms ease-out;
+  --animate-fade-in: fade-in 150ms ease-out;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: calc(var(--container-page) + 2rem);
+  padding-inline: 1rem;
+}
+
+@utility font-heading {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-stretch: 112%;
+  font-variation-settings: "wdth" 112;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Dual-handle price slider: two stacked range inputs share one track. */
+@layer components {
+  .range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+  }
+  .range-thumb::-webkit-slider-runnable-track {
+    background: transparent;
+    height: 20px;
+  }
+  .range-thumb::-moz-range-track {
+    background: transparent;
+  }
+  .range-thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: auto;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    cursor: grab;
+  }
+  .range-thumb::-moz-range-thumb {
+    pointer-events: auto;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    cursor: grab;
+  }
+  .range-thumb:focus-visible {
+    outline: none;
+  }
+  .range-thumb:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 3px var(--color-paper),
+      0 0 0 5px var(--color-ink);
+  }
 }

@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI.CO storefront
 
-## Getting Started
-
-First, run the development server:
+A responsive fashion storefront built from the AI.CO Figma community template. Product data comes from the free [DummyJSON](https://dummyjson.com/docs/products) API.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build && npm start
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route                           | Purpose                                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/`                             | Hero, brand strip, New Arrivals, Top Selling, Browse by Dress Style, customer reviews                                                                  |
+| `/shop`                         | Product grid with category, dress style, price, colour, size, brand, sale and search filters, plus sorting and pagination. All state lives in the URL. |
+| `/product/[slug]`               | Gallery, size selection, stock-aware quantity, Add to Cart, details / reviews / FAQ tabs, related products                                             |
+| `/cart`                         | Line items, quantity, remove, promo codes (`SHOP20`, `SAVE10`), order summary                                                                          |
+| `/checkout`                     | Four steps (contact → shipping → delivery → review) with validation, then a **simulated** order                                                        |
+| `/checkout/success`, `/account` | Order confirmation and order history (stored in this browser)                                                                                          |
+| `/brands`, `/info/[slug]`       | Brand index; footer content pages                                                                                                                      |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How it fits together
 
-## Learn More
+- **`src/lib/api.ts`**: the DummyJSON client. It maps API products to the app's `Product` type: prices in integer cents, discounts, colours taken from product titles, and size options for apparel and shoes. Set `PRODUCTS_API_URL` to point at another compatible host.
+- **`src/lib/catalog.ts`**: the only data access that pages use. It fetches the catalog once, caches it for an hour (`'use cache'`), keeps only fashion categories (`STORE_CATEGORIES` in `src/lib/store-config.ts`), and handles filtering, sorting and pagination. To move to a real backend, change these two files.
+- **`src/lib/pricing.ts`**: the single source for subtotal, discount, delivery and total. The cart, checkout and saved orders all use it.
+- **`src/store/`**: Zustand stores persisted to `localStorage` (cart, orders, reviews you write, banner dismissal). `StoreHydrator` loads them after the first render, so server and client markup match.
+- **`src/lib/filters.ts`**: converts between `/shop` URL params and filter objects. Used on both server and client.
 
-To learn more about Next.js, take a look at the following resources:
+## Known limitations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **No real payments or accounts.** Checkout is clearly labelled as a demo. Orders exist only in this browser.
+- **Sample data.** DummyJSON has about 54 fashion products. They have no real colour or size variants: colours are read from product titles, and apparel/shoe sizes are added by the app. Its minimum order quantities are ignored.
+- **Fonts.** The design's heading font, Integral CF, is commercial, so **Archivo Expanded** stands in. Body text uses **Satoshi** (`src/fonts/`), licensed under the ITF Free Font License. That license allows self-hosting on your own site but **not redistribution**, so don't publish the font file in a public repository.
+- **Reviews you write** are saved only in your browser, because the API is read-only.
+- `design-reference/` holds the Figma exports (about 41 MB) and isn't used at runtime.
