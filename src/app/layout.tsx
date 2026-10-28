@@ -6,6 +6,7 @@ import { TopBanner } from "@/components/layout/top-banner";
 import { Toaster } from "@/components/ui/toaster";
 import { getCategories } from "@/lib/catalog";
 import { StoreHydrator } from "@/store/hydrator";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,6 +43,10 @@ export default async function RootLayout({
         <Footer />
         <Toaster />
         <StoreHydrator />
+        <Script
+          src="https://pulse-ai-dynamic-script-generator.s3.eu-north-1.amazonaws.com/generated/C7MNpr6iTiPXC8kg.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
